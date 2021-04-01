@@ -1,0 +1,46 @@
+*.java.hsp
+*.sonarj
+.DS_Store
+.settings
+.springBeans
+bin
+integration-repo
+ivy-cache
+jxl.log
+jmx.log
+derby.log
+spring-test/test-output/
+.gradle
+argfile*
+activemq-data/
+
+# python
+*.py~
+*.pyc
+*.pydevproject
+.pydevproject
+
+# Project
+/build
+buildSrc/build
+/spring-*/build
+/src/asciidoc/build
+target/
+output/
+logs/
+
+# IDEA artifacts and output dirs
+*.iml
+*.ipr
+*.iws
+.idea
+out
+test-output
+atlassian-ide-plugin.xml
+.gradletasknamecache
+
+# Eclipse
+.classpath
+.project
+issue.info
+spring-*/src/main/java/META-INF/MANIFEST.MF
