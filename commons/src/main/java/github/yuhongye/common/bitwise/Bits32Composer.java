@@ -1,7 +1,5 @@
 package github.yuhongye.common.bitwise;
 
-import com.google.common.base.Preconditions;
-
 import java.util.Arrays;
 
 /**
@@ -26,6 +24,7 @@ import java.util.Arrays;
  *     int pv = composer.get(value, 3);
  * </p>
  * 最终结果可以放到byte, short, int 中使用本类，如果超过了32位 使用 {@link Bits64Composer}
+ * 这个类为什么会存在？ 在jmh中测试发现，对于composed value is int 的场景下，该类略快于{@link Bits64Composer}
  */
 public class Bits32Composer {
     /**
@@ -63,31 +62,9 @@ public class Bits32Composer {
     }
 
     int[] initMaskAnsShift(int... bitCountPerField) {
-        int totalBitNumber = Arrays.stream(bitCountPerField).sum();
-        Preconditions.checkArgument(totalBitNumber <= Integer.SIZE, "需要的总位数超过了int的范围: " + totalBitNumber);
-        int[] maskAndShift = new int[bitCountPerField.length * 2];
-        int start = 0;
-        int index = 0;
-        for (int bits : bitCountPerField) {
-            int shift = start + bits;
-            // [0, start) 都是1
-            int prev = (1 << start) - 1;
-            // [0, shift) 都是1
-            int current = (1 << shift) - 1;
-            /**
-             * shift == 32，(1 << shift) == (1 << 0)
-             */
-            if (shift == 32) {
-                current = -1;
-            }
-            int mask = prev ^ current;
-            maskAndShift[index++] = mask;
-            maskAndShift[index++] = start;
-
-            start = shift;
-        }
-
-        return maskAndShift;
+        return maskAndShift = Arrays.stream(Bits64Composer.initMaskAnsShift(Integer.SIZE, bitCountPerField))
+                .mapToInt(v -> (int) v)
+                .toArray();
     }
 
     /**

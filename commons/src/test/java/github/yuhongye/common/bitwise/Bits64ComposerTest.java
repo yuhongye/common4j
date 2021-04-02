@@ -10,24 +10,29 @@ public class Bits64ComposerTest {
     public void testInitMaskAnsShift() {
         Bits64Composer composer = new Bits64Composer();
 
-        long[] maskAnsShift = composer.initMaskAnsShift(2, 3, 1, 2, 5, 8);
+        long[] maskAnsShift = composer.initMaskAnsShift(Long.SIZE, 2, 3, 1, 2, 5, 8);
         assertEquals(12, maskAnsShift.length);
         long[] expected = {0x03, 0, 0x1C, 2, 0x20, 5, 0xC0, 6, 0x1F00, 8, 0x1FE000, 13};
         assertArrayEquals(expected, maskAnsShift);
 
-        maskAnsShift = composer.initMaskAnsShift(3);
+        maskAnsShift = composer.initMaskAnsShift(Long.SIZE, 3);
         assertEquals(2, maskAnsShift.length);
         expected = new long[]{0x07, 0};
         assertArrayEquals(expected, maskAnsShift);
 
-        maskAnsShift = composer.initMaskAnsShift(3, 10, 19);
+        maskAnsShift = composer.initMaskAnsShift(Long.SIZE, 3, 10, 19);
         assertEquals(6, maskAnsShift.length);
         expected = new long[]{0x07, 0, 0x1FF8, 3, 0xFFFFE000L, 13};
         assertArrayEquals(expected, maskAnsShift);
 
-        maskAnsShift = composer.initMaskAnsShift(3, 10, 18, 1);
+        maskAnsShift = composer.initMaskAnsShift(Long.SIZE, 3, 10, 18, 1);
         assertEquals(8, maskAnsShift.length);
         expected = new long[]{0x07, 0, 0x1FF8, 3, 0x7FFFE000, 13, 0x80000000L, 31};
+        assertArrayEquals(expected, maskAnsShift);
+
+        maskAnsShift = composer.initMaskAnsShift(Long.SIZE, 32, 32);
+        assertEquals(4, maskAnsShift.length);
+        expected = new long[]{0xFFFFFFFFL, 0, 0xFFFFFFFF00000000L, 32};
         assertArrayEquals(expected, maskAnsShift);
     }
 

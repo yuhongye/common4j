@@ -26,7 +26,6 @@ import java.util.Arrays;
  *     int pv = composer.get(value, 3);
  * </p>
  *
- * 这个类为什么会存在？ 在jmh中测试发现，对于composed value is int 的场景下，该类略慢于{@link Bits32Composer}
  */
 public class Bits64Composer {
     /**
@@ -60,12 +59,12 @@ public class Bits64Composer {
      * @param bitCountPerField 按字段顺序传递每个字段占用的位数，总和不超过32位
      */
     public Bits64Composer(int... bitCountPerField) {
-        maskAndShift = initMaskAnsShift(bitCountPerField);
+        maskAndShift = initMaskAnsShift(Long.SIZE, bitCountPerField);
     }
 
-    long[] initMaskAnsShift(int... bitCountPerField) {
+    static long[] initMaskAnsShift(int capacity, int... bitCountPerField) {
         int totalBitNumber = Arrays.stream(bitCountPerField).sum();
-        Preconditions.checkArgument(totalBitNumber <= Long.SIZE, "需要的总位数超过了int的范围: " + totalBitNumber);
+        Preconditions.checkArgument(totalBitNumber <= capacity, "总数量: " + capacity + ", 要求的容量: " + totalBitNumber);
         long[] maskAndShift = new long[bitCountPerField.length * 2];
         int start = 0;
         int index = 0;
@@ -77,8 +76,9 @@ public class Bits64Composer {
             long current = (1L << shift) - 1;
             /**
              * shift == 32，(1 << shift) == (1 << 0)
+             * shift == 64, (1 << shift) == (1 << 0)
              */
-            if (shift == 64) {
+            if (shift == capacity) {
                 current = -1L;
             }
             long mask = prev ^ current;
